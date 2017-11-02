@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Smart Goals</string>
+    <string name="str_add_goal">Add a Goal</string>
 </resources>
