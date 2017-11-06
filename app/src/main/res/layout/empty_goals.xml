@@ -19,6 +19,7 @@
         android:background="@drawable/bg_btn_add_it"
         android:layout_below="@+id/iv_logo"
         android:fontFamily="sans-serif-thin"
+        android:onClick="showDialog"
         android:layout_centerHorizontal="true"
         android:textSize="@dimen/btn_add_font_size"
         android:textAllCaps="false"
