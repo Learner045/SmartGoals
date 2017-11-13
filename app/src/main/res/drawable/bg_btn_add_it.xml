@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="#05ffca"/>
+            <corners android:radius="@dimen/btn_add_it_corner_radius_purple"/>
+        </shape>
+    </item>
    <item>
        <shape>
            <stroke android:width="@dimen/btn_add_it_stroke_width" android:color="#d691ff"/>
@@ -8,10 +15,5 @@
        </shape>
    </item>
 
-    <item android:state_pressed="true">
-        <shape>
-            <solid android:color="#05ffca"/>
-            <corners android:radius="@dimen/btn_add_it_corner_radius_purple"/>
-        </shape>
-    </item>
+
 </selector>

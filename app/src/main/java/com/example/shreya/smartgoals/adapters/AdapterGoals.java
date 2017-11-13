@@ -8,8 +8,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.shreya.smartgoals.R;
+import com.example.shreya.smartgoals.beans.Goal;
 
 import java.util.ArrayList;
+
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
 /**
  * Created by Shreya on 08-11-2017.
@@ -18,10 +23,16 @@ import java.util.ArrayList;
 public class AdapterGoals extends RecyclerView.Adapter<AdapterGoals.GoalHolder>{
 
     private LayoutInflater mInflater;
-    private ArrayList<String> mItems=new ArrayList<>();
-    public AdapterGoals(Context context){
+    private RealmResults<Goal> mResults;
+
+    public AdapterGoals(Context context, RealmResults<Goal> results){
         mInflater=LayoutInflater.from(context); //we get inflater here because our onCreateView is called multiple times throughtout
-        mItems=generateValues();
+       update(results);
+    }
+
+    public void update(RealmResults<Goal>results){
+        mResults=results;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -31,7 +42,7 @@ public class AdapterGoals extends RecyclerView.Adapter<AdapterGoals.GoalHolder>{
         return holder;
     }
 
-    public static ArrayList<String> generateValues(){
+    private static ArrayList<String> generateValues(){
         ArrayList<String>dummyValues=new ArrayList<>();
         for(int i=0;i<100;i++){
             dummyValues.add("Item "+i);
@@ -41,13 +52,16 @@ public class AdapterGoals extends RecyclerView.Adapter<AdapterGoals.GoalHolder>{
 
     @Override
     public void onBindViewHolder(GoalHolder holder, int position) {
-        holder.mTextWhat.setText(mItems.get(position));
+        Goal goal=mResults.get(position);
+        holder.mTextWhat.setText(goal.getWhat());
+
 
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+       // return mResults.size();
+        return mResults.size();
     }
 
     public static class GoalHolder extends RecyclerView.ViewHolder{
@@ -57,7 +71,6 @@ public class AdapterGoals extends RecyclerView.Adapter<AdapterGoals.GoalHolder>{
             super(itemView);
             mTextWhat= (TextView)itemView.findViewById(R.id.tv_what);
             mTextWhen=(TextView)itemView.findViewById(R.id.tv_when);
-
 
         }
     }

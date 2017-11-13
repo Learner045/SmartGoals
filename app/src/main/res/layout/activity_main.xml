@@ -15,6 +15,15 @@
         android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <include layout="@layout/empty_goals"/>
+
+
+    <com.example.shreya.smartgoals.widgets.GoalRecyclerView
+        android:id="@+id/rv_goals"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <include android:id="@+id/empty_goals"
+        layout="@layout/empty_goals"/>
 
 </RelativeLayout>
