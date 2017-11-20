@@ -21,17 +21,29 @@ import io.realm.RealmResults;
  * Created by Shreya on 08-11-2017.
  */
 
-public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SwipeListener{
 
     private LayoutInflater mInflater;
     private RealmResults<Goal> mResults;
 
-    public static final int ITEM=0;
+    private static final int ITEM=0;
     public static final int FOOTER=1;
+
+    private AddListener mAddListener;
+    private Realm mRealm;
 
     public AdapterGoals(Context context, RealmResults<Goal> results){
         mInflater=LayoutInflater.from(context); //we get inflater here because our onCreateView is called multiple times throughtout
        update(results);
+    }
+    public AdapterGoals(Context context,Realm realm, RealmResults<Goal> results){
+        mRealm=realm;
+        mInflater=LayoutInflater.from(context); //we get inflater here because our onCreateView is called multiple times throughtout
+        update(results);
+    }
+
+    public void setAddListener(AddListener listener){
+        mAddListener=listener;
     }
 
     public void update(RealmResults<Goal>results){
@@ -84,7 +96,25 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     @Override
     public int getItemCount() {
        // return mResults.size();
-        return mResults.size()+1; //+1 because we have footer too
+
+        if(mResults==null || mResults.isEmpty()){ //we show our empty layout
+            return 0;
+        }else{
+            return mResults.size()+1; //+1 because we have footer too
+        }
+
+    }
+
+    @Override
+    public void onSwipe(int position) {
+        //del item but NOT FOOTER
+        if(position<mResults.size()){
+            mRealm.beginTransaction();
+            mResults.get(position).deleteFromRealm();
+            mRealm.commitTransaction();
+            notifyItemRemoved(position);
+        }
+
     }
 
     public static class GoalHolder extends RecyclerView.ViewHolder{
@@ -97,12 +127,18 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         }
     }
-    public static class FooterHolder extends RecyclerView.ViewHolder{
+    public  class FooterHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
        Button mBtnAdd;
         public FooterHolder(View itemView) {
             super(itemView);
             mBtnAdd=(Button)itemView.findViewById(R.id.btn_footer);
+            mBtnAdd.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mAddListener.add();
         }
     }
 }
