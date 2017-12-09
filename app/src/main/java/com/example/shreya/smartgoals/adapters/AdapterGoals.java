@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.shreya.smartgoals.AppSmartGoals;
 import com.example.shreya.smartgoals.R;
 import com.example.shreya.smartgoals.beans.Goal;
 import com.example.shreya.smartgoals.extras.Util;
@@ -31,8 +32,14 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private LayoutInflater mInflater;
     private RealmResults<Goal> mResults;
 
-    private static final int ITEM=0;
-    public static final int FOOTER=1;
+    public static final int COUNT_FOOTER=1;
+    public static final int COUNT_NO_ITEMS=1;
+
+    //these represent diff views we want
+    private static final int ITEM=0; //normal row
+    public static final int NO_ITEM=1;//row "No items to disp"
+    public static final int FOOTER=2;//footer row
+    private int filterOption;
 
     private AddListener mAddListener;
     private MarkListener markListener;
@@ -45,9 +52,11 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
        update(results);
     }
     public AdapterGoals(Context context,Realm realm, RealmResults<Goal> results){
+        this.context=context;
         mRealm=realm;
         mInflater=LayoutInflater.from(context); //we get inflater here because our onCreateView is called multiple times throughtout
         update(results);
+
     }
 
     public void setAddListener(AddListener listener){
@@ -57,6 +66,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void update(RealmResults<Goal>results){
         mResults=results;
+        filterOption= AppSmartGoals.load(context);
         notifyDataSetChanged();
     }
 
@@ -65,8 +75,12 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(viewType==FOOTER){
 
             View view=mInflater.inflate(R.layout.footer,parent,false);
-           return new FooterHolder(view);
-        }else{
+            return new FooterHolder(view);
+        }else if(viewType==NO_ITEM){
+            View view=mInflater.inflate(R.layout.no_item,parent,false);
+            return new NoItemsHolder(view);
+        }
+        else{
             View view=mInflater.inflate(R.layout.row_goal,parent,false);
             return new GoalHolder(view);
         }
@@ -75,11 +89,28 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if(mResults==null || position<mResults.size() ){
-            return ITEM;
-        }
-         return FOOTER;
+        //if there are items then display normally like earlier
+       if(!mResults.isEmpty()){
+           if(position<mResults.size()){
+               return ITEM;
+           }else{
+               return FOOTER;
+           }
+       }else{
+           //no items but we are under complte & incomplete screens
+           if(filterOption==Filter.COMPLETE || Filter.INCOMPLETE==filterOption){
+               if(position==0){
 
+                   return NO_ITEM;//display the row"no item to display"
+
+               }else{
+                   return FOOTER; //display footer if pos 1
+               }
+
+           }else{
+               return ITEM; //default
+           }
+       }
     }
 
     private static ArrayList<String> generateValues(){
@@ -113,11 +144,22 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemCount() {
        // return mResults.size();
 
-        if(mResults==null || mResults.isEmpty()){ //we show our empty layout
-            return 0;
-        }else{
-            return mResults.size()+1; //+1 because we have footer too
-        }
+      if(!mResults.isEmpty()){
+
+          return mResults.size()+COUNT_FOOTER;
+
+      }else{
+
+          //if we are trying to check ascending/descending view &
+          // there are no items in the database then we need to show empty screen as earlier
+          if(filterOption==Filter.LEAST_TIME_LEFT || filterOption==Filter.MOST_TIME_LEFT || filterOption==Filter.NONE){
+              return 0;
+
+          }else{
+              //we display "No  items to display" and a footer
+              return COUNT_NO_ITEMS+COUNT_FOOTER;
+          }
+      }
 
     }
 
@@ -175,6 +217,12 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             Util.setBackground(itemView,drawable);
 
+        }
+    }
+    public class NoItemsHolder extends RecyclerView.ViewHolder {
+
+        public NoItemsHolder(View itemView) {
+            super(itemView);
         }
     }
     public  class FooterHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
