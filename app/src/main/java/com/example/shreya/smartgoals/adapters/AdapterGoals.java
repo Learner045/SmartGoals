@@ -1,7 +1,11 @@
 package com.example.shreya.smartgoals.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.shreya.smartgoals.R;
 import com.example.shreya.smartgoals.beans.Goal;
+import com.example.shreya.smartgoals.extras.Util;
 
 import java.util.ArrayList;
 
@@ -30,7 +35,10 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static final int FOOTER=1;
 
     private AddListener mAddListener;
+    private MarkListener markListener;
+
     private Realm mRealm;
+    private Context context;
 
     public AdapterGoals(Context context, RealmResults<Goal> results){
         mInflater=LayoutInflater.from(context); //we get inflater here because our onCreateView is called multiple times throughtout
@@ -45,6 +53,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void setAddListener(AddListener listener){
         mAddListener=listener;
     }
+    public void setMarkListener(MarkListener markListener){this.markListener=markListener;}
 
     public void update(RealmResults<Goal>results){
         mResults=results;
@@ -88,9 +97,16 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
            GoalHolder goalHolder=(GoalHolder)holder;
             Goal goal=mResults.get(position);
-            goalHolder.mTextWhat.setText(goal.getWhat());
+            goalHolder.mTextWhat.setText(goal.getWhat());//done differently
+            goalHolder.mTextWhen.setText(processTime(goal.getWhen()));
+            goalHolder.setBackground(goal.isCompleted());//change color
         }
 
+    }
+
+    private String processTime(long when) {
+        // our goal date, current time, days diff ,abbreviate everything
+        return ""+ DateUtils.getRelativeTimeSpanString(when,System.currentTimeMillis(),DateUtils.DAY_IN_MILLIS,DateUtils.FORMAT_ABBREV_ALL);
     }
 
     @Override
@@ -117,13 +133,47 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    public static class GoalHolder extends RecyclerView.ViewHolder{
+    public void markComplete(int position) {
+
+        if(position<mResults.size()) {
+            mRealm.beginTransaction();
+            mResults.get(position).setCompleted(true);
+            mRealm.commitTransaction();
+            notifyDataSetChanged();
+        }
+    }
+
+    public  class GoalHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView mTextWhat,mTextWhen;
+        View itemview;
+
         public GoalHolder(View itemView) {
             super(itemView);
+            itemview=itemView;
+            context=itemView.getContext();
+            itemView.setOnClickListener(this); //setting listener on row
             mTextWhat= (TextView)itemView.findViewById(R.id.tv_what);
             mTextWhen=(TextView)itemView.findViewById(R.id.tv_when);
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            //we need to show dialog_mark but fragment manager is avail to activity
+            markListener.onMark(getAdapterPosition());
+        }
+
+        public void setBackground(boolean completed) {
+            //changing color for views marked as complete
+            Drawable drawable;
+            if(completed){
+               drawable= ContextCompat.getDrawable(context,R.color.bg_goal_complete);
+            }else{
+               drawable= ContextCompat.getDrawable(context,R.drawable.bg_row_goal);
+            }
+
+            Util.setBackground(itemView,drawable);
 
         }
     }
@@ -138,7 +188,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         @Override
         public void onClick(View view) {
-            mAddListener.add();
+            mAddListener.add();//showing dialog to add & adding data from it
         }
     }
 }
