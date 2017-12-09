@@ -2,4 +2,6 @@
     <string name="app_name">Smart Goals</string>
     <string name="str_add_goal">Add a Goal</string>
     <string name="hint_et_add_goal">What is it?</string>
+    <string name="Add_menu_item">Add</string>
+    <string name="no_items_to_display">No Items To Display</string>
 </resources>

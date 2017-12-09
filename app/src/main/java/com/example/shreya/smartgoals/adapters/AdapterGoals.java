@@ -108,7 +108,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                }
 
            }else{
-               return ITEM; //default
+               return ITEM; //default will never be used
            }
        }
     }
