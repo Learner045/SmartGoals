@@ -3,6 +3,7 @@ package com.example.shreya.smartgoals;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import com.example.shreya.smartgoals.adapters.CompleteListener;
 import com.example.shreya.smartgoals.adapters.Divider;
 import com.example.shreya.smartgoals.adapters.Filter;
 import com.example.shreya.smartgoals.adapters.MarkListener;
+import com.example.shreya.smartgoals.adapters.ResetListener;
 import com.example.shreya.smartgoals.adapters.SimpleTouchCallBack;
 import com.example.shreya.smartgoals.beans.Goal;
 import com.example.shreya.smartgoals.widgets.GoalRecyclerView;
@@ -35,6 +37,8 @@ public class ActivityMain extends AppCompatActivity {
     RealmResults<Goal> results;
     AdapterGoals adapterGoals;
     View mEmptyView;
+
+    //INTERFACES
     private RealmChangeListener mChangeListener =new RealmChangeListener() {
         @Override
         public void onChange(Object o) {
@@ -64,6 +68,14 @@ public class ActivityMain extends AppCompatActivity {
         }
     };
 
+    private ResetListener mResetListener=new ResetListener() {
+        @Override
+        public void onReset() {
+            AppSmartGoals.save(ActivityMain.this,Filter.NONE);
+            loadResuts(Filter.NONE);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +98,12 @@ public class ActivityMain extends AppCompatActivity {
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.addItemDecoration(new Divider(this,LinearLayoutManager.VERTICAL));
         adapterGoals=new AdapterGoals(this,mRealm,results); //we pass realm instance as we are deleting item from it on swipe
+        adapterGoals.setHasStableIds(true);//needed for animation & getID to work
         adapterGoals.setAddListener(mAddListener); //show add dialog
         adapterGoals.setMarkListener(mMarkListener); //show mark dialog
+        adapterGoals.setResetListener(mResetListener);
         mRecycler.setAdapter(adapterGoals);
+        mRecycler.setItemAnimator(new DefaultItemAnimator());
 
         SimpleTouchCallBack simpleTouchCallBack=new SimpleTouchCallBack(adapterGoals);
         ItemTouchHelper helper=new ItemTouchHelper(simpleTouchCallBack);

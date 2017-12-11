@@ -13,6 +13,8 @@ import android.widget.ImageButton;
 
 import com.example.shreya.smartgoals.beans.Goal;
 
+import java.util.Calendar;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -41,12 +43,24 @@ public class DialogAdd extends DialogFragment {
         }
     };
 
+    //adding data to database here
     private void addAction() {
         String what=mInputWhat.getText().toString();
+        String date=mInputWhen.getDayOfMonth()+"/"+mInputWhen.getMonth()+"/"+mInputWhen.getYear();
+
+        //setting our when in calendar
         long now=System.currentTimeMillis();
+        Calendar calendar= Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, mInputWhen.getDayOfMonth());
+        calendar.set(Calendar.MONTH, mInputWhen.getMonth());
+        calendar.set(Calendar.YEAR, mInputWhen.getYear());
+        calendar.set(Calendar.HOUR,0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
         Realm.init(getActivity());             //DONE DIFFERENTLY
         Realm realm=Realm.getDefaultInstance();
-        Goal goal=new Goal(what,now,0,false);
+        Goal goal=new Goal(what,now, calendar.getTimeInMillis() ,false);
         realm.beginTransaction();
         realm.copyToRealm(goal);
         realm.commitTransaction();
@@ -56,6 +70,14 @@ public class DialogAdd extends DialogFragment {
     public DialogAdd(){
 
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //setting style to our date picker widget
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogTheme);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

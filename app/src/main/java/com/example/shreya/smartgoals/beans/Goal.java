@@ -24,6 +24,7 @@ public class Goal extends RealmObject {
         this.completed = completed;
     }
 
+
     public String getWhat() {
         return what;
     }

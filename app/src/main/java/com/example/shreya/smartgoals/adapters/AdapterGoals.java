@@ -43,6 +43,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private AddListener mAddListener;
     private MarkListener markListener;
+    private ResetListener resetListener;
 
     private Realm mRealm;
     private Context context;
@@ -63,6 +64,8 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         mAddListener=listener;
     }
     public void setMarkListener(MarkListener markListener){this.markListener=markListener;}
+    public void setResetListener(ResetListener resetListener) {this.resetListener = resetListener;}
+
 
     public void update(RealmResults<Goal>results){
         mResults=results;
@@ -85,6 +88,16 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return new GoalHolder(view);
         }
 
+    }
+
+    //needed for animation on recyc view
+    @Override
+    public long getItemId(int position) {
+        if(position<mResults.size()){
+
+            return mResults.get(position).getAdded(); //returns time when goal added in millisec
+        }
+        return RecyclerView.NO_ID;
     }
 
     @Override
@@ -113,6 +126,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
        }
     }
 
+    //test
     private static ArrayList<String> generateValues(){
         ArrayList<String>dummyValues=new ArrayList<>();
         for(int i=0;i<100;i++){
@@ -172,7 +186,15 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mRealm.commitTransaction();
             notifyItemRemoved(position);
         }
+        resetFilterIfEmpty();
 
+    }
+
+    //no items in database && mode is complte/incomplet
+    private void resetFilterIfEmpty() {
+        if(mResults.isEmpty() && (filterOption==Filter.COMPLETE || filterOption==Filter.INCOMPLETE)){
+            resetListener.onReset();
+        }
     }
 
     public void markComplete(int position) {
@@ -184,6 +206,8 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             notifyDataSetChanged();
         }
     }
+
+
 
     public  class GoalHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -225,6 +249,8 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(itemView);
         }
     }
+
+
     public  class FooterHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
        Button mBtnAdd;
