@@ -14,4 +14,5 @@
     <dimen name="iv_goal_size">12dp</dimen>
     <dimen name="tv_what_horizontal_padding">22dp</dimen>
     <dimen name="row_goal_padding">22dp</dimen>
+    <dimen name="bg_item_picker_corner_radius">3dp</dimen>
 </resources>

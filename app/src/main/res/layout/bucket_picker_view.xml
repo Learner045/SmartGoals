@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_month"
+        android:drawableTop="@drawable/up_normal"
+        android:text="JAN"
+        android:drawableBottom="@drawable/down_normal"
+        style="@style/DatePickerItemStyle" />
+
+    <Space
+        android:layout_width="32dp"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:drawableTop="@drawable/up_normal"
+        style="@style/DatePickerItemStyle"
+        android:drawableBottom="@drawable/down_normal"
+        android:text="10"/>
+
+    <Space
+        android:layout_width="32dp"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/tv_year"
+        android:drawableTop="@drawable/up_normal"
+        style="@style/DatePickerItemStyle"
+        android:drawableBottom="@drawable/down_normal"
+        android:text="2021"/>
+
+</LinearLayout>
