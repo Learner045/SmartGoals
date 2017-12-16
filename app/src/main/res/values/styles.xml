@@ -1,11 +1,11 @@
 <resources>
 
+    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar"/>
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="AppTheme.Base">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Dialog" >
@@ -23,8 +23,8 @@
 
     <style name="DatePickerItemStyle">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">96dp</item>
-        <item name="android:drawablePadding">16dp</item>
+        <item name="android:layout_width">@dimen/bucket_picker_view_width</item>
+        <item name="android:drawablePadding">@dimen/bucket_picker_view_drawable_padding</item>
         <item name="android:gravity">center</item>
         <item name="android:maxLines">1</item>
         <item name="android:textColor">@color/purple</item>
@@ -33,4 +33,5 @@
     </style>
 
 
+    <string name="sans_serif_thin">sans_serif_thin</string>
 </resources>
