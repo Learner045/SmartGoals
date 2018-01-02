@@ -1,5 +1,8 @@
 package com.example.shreya.smartgoals;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.shreya.smartgoals.Services.NotificationService;
 import com.example.shreya.smartgoals.adapters.AdapterGoals;
 import com.example.shreya.smartgoals.adapters.AddListener;
 import com.example.shreya.smartgoals.adapters.CompleteListener;
@@ -22,6 +26,7 @@ import com.example.shreya.smartgoals.adapters.MarkListener;
 import com.example.shreya.smartgoals.adapters.ResetListener;
 import com.example.shreya.smartgoals.adapters.SimpleTouchCallBack;
 import com.example.shreya.smartgoals.beans.Goal;
+import com.example.shreya.smartgoals.extras.Util;
 import com.example.shreya.smartgoals.widgets.GoalRecyclerView;
 
 import io.realm.Realm;
@@ -109,6 +114,7 @@ public class ActivityMain extends AppCompatActivity {
         ItemTouchHelper helper=new ItemTouchHelper(simpleTouchCallBack);
         helper.attachToRecyclerView(mRecycler); //attaching call back functionality to recy view
 
+        Util.scheduleAlarm(this);
     }
 
     @Override

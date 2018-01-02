@@ -4,4 +4,7 @@
     <string name="hint_et_add_goal">What is it?</string>
     <string name="Add_menu_item">Add</string>
     <string name="no_items_to_display">No Items To Display</string>
+    <string name="notif_messg">You are nearing your goal</string>
+    <string name="notif_title">Achievement</string>
+    <string name="notif_long_messg">Congrats, You are on the verge of accomplishing your goal</string>
 </resources>

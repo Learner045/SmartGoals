@@ -1,6 +1,7 @@
 package com.example.shreya.smartgoals.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
@@ -32,11 +33,11 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private LayoutInflater mInflater;
     private RealmResults<Goal> mResults;
 
-    public static final int COUNT_FOOTER=1;
-    public static final int COUNT_NO_ITEMS=1;
+    private static final int COUNT_FOOTER=1;
+    private static final int COUNT_NO_ITEMS=1;
 
     //these represent diff views we want
-    private static final int ITEM=0; //normal row
+    public static final int ITEM=0; //normal row
     public static final int NO_ITEM=1;//row "No items to disp"
     public static final int FOOTER=2;//footer row
     private int filterOption;
@@ -221,6 +222,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             itemView.setOnClickListener(this); //setting listener on row
             mTextWhat= (TextView)itemView.findViewById(R.id.tv_what);
             mTextWhen=(TextView)itemView.findViewById(R.id.tv_when);
+            AppSmartGoals.setRalewayRegular(context,mTextWhat,mTextWhen);
 
         }
 
@@ -247,6 +249,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public NoItemsHolder(View itemView) {
             super(itemView);
+
         }
     }
 
@@ -258,6 +261,7 @@ public class AdapterGoals extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(itemView);
             mBtnAdd=(Button)itemView.findViewById(R.id.btn_footer);
             mBtnAdd.setOnClickListener(this);
+            AppSmartGoals.setRalewayRegular(context,mBtnAdd);
         }
 
         @Override

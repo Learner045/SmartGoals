@@ -4,12 +4,14 @@
     <dimen name="btn_add_it_corner_radius_green">2dp</dimen>
     <dimen name="btn_add_it_stroke_width">1dp</dimen>
 
-    <dimen name="iv_logo_size">192dp</dimen>
+    <dimen name="iv_logo_size">198dp</dimen>
     <dimen name="iv_logo_margin">84dp</dimen>
 
     <dimen name="btn_add_horizontal_padding">60dp</dimen>
     <dimen name="btn_add_vertical_padding">8dp</dimen>
     <dimen name="btn_add_margin">24dp</dimen>
+    <dimen name="btn_add_margin_top">40dp</dimen>
+    <dimen name="btn_add_margin_side">24dp</dimen>
     <dimen name="btn_add_font_size">28sp</dimen>
 
     <dimen name="tv_title_vertical_margin">36dp</dimen>

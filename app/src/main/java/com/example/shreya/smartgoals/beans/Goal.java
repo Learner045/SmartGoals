@@ -19,7 +19,7 @@ public class Goal extends RealmObject {
 
     public Goal(String what, long added, long when, boolean completed) {
         this.what = what;
-        this.added = added;
+        this.added = added; //when goal is added time
         this.when = when;
         this.completed = completed;
     }

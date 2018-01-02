@@ -10,10 +10,9 @@
         android:type="radial"
         android:centerX="50%"
         android:centerY="30%"
-        android:startColor="#99adda"
-        android:endColor="#1d166e"
+        android:startColor="#c8a1e4"
+        android:endColor="#3f0f5e"
         android:gradientRadius="400"/>
-
 
 
 </shape>

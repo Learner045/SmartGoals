@@ -3,6 +3,10 @@ package com.example.shreya.smartgoals.widgets;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -21,6 +25,7 @@ import java.util.Calendar;
  */
 
 public class BucketPickerView extends LinearLayout implements View.OnTouchListener {
+
     private TextView mTextDate, mTextMonth, mTextYear;
     private Calendar calendar;
     private SimpleDateFormat mFormatter;
@@ -30,6 +35,33 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
     public static final int TOP=1;
     public static final int RIGHT=2;
     public static final int BOTTOM=3;
+
+    private int MESSAGE_WHAT = 123;//distinguishes multiple messgs when sent to handler, here random
+    private boolean mIncrement;
+    private boolean mDecrement;
+
+    private int activeId; //stores view's id which is currently being touched
+    public static final int DELAY=250;
+
+    private Handler mHandler = new Handler(new Handler.Callback(){
+
+        @Override
+        public boolean handleMessage(Message message) {
+            if(mIncrement){
+                increment(activeId);
+            }
+            if(mDecrement){
+                decrement(activeId);
+            }
+
+            if(mIncrement || mDecrement){
+                mHandler.sendEmptyMessageDelayed(MESSAGE_WHAT,DELAY);
+                //creates a loop as long as view is int pressed/touch state
+            }
+            return true;
+        }
+
+    });
 
     public BucketPickerView(Context context) {
         super(context);
@@ -52,6 +84,30 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
         View view= LayoutInflater.from(context).inflate(R.layout.bucket_picker_view,this);
         calendar=Calendar.getInstance();
         mFormatter=new SimpleDateFormat("MMM");
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+
+        Bundle bundle=new Bundle();
+        bundle.putParcelable("super",super.onSaveInstanceState()); //we need to also return config setup for linearlayout in superclass
+        bundle.putInt("date",calendar.get(Calendar.DATE));
+        bundle.putInt("month",calendar.get(Calendar.MONTH));
+        bundle.putInt("year",calendar.get(Calendar.YEAR));
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if(state instanceof Parcelable){
+            Bundle bundle=(Bundle)state;
+            state=bundle.getParcelable("super");
+            int date=bundle.getInt("date");
+            int month=bundle.getInt("month");
+            int year=bundle.getInt("year");
+            update(date,month,year,0,0,0);
+        }
+        super.onRestoreInstanceState(state);
     }
 
     @Override
@@ -119,39 +175,47 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
 
             float x=event.getX();
             float y=event.getY();
+            activeId= textview.getId(); //required so handler can increment value
 
             if(topDrawableHit(textview, topBounds.height(),x,y)){
                 //all actions corresponding to incrementing values
                 if(isActionDown(event)){
+                    mIncrement=true;
                     increment(textview.getId());
+                    mHandler.removeMessages(MESSAGE_WHAT); //removes already sent messgs when press down happens again
+                    mHandler.sendEmptyMessageDelayed(MESSAGE_WHAT,DELAY); //messg arrives after a specific delay
+                    toggleDrawable(textview,true);
                 }
+
+                if(isActionUpOrCancel(event)){
+                    mIncrement=false;
+                    toggleDrawable(textview,false);
+                }
+
+
             }else if(bottomDrawableHit(textview, bottomBounds.height(), x,y)){
                 //all actions corresponding to decrementing values
                 if(isActionDown(event)){
+                    mDecrement=true;
                     decrement(textview.getId());
+                    mHandler.removeMessages(MESSAGE_WHAT);
+                    mHandler.sendEmptyMessageDelayed(MESSAGE_WHAT,DELAY);
+                    toggleDrawable(textview,true);
+                }
+
+                if(isActionUpOrCancel(event)){
+                    mDecrement=false;
+                    toggleDrawable(textview,false);
                 }
 
             }else{
-
+                //reset
+                mIncrement=false;
+                mDecrement=false;
+                toggleDrawable(textview,false);
             }
         }
 
-        switch(event.getAction()) {
-
-            //on press
-            case MotionEvent.ACTION_DOWN:
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                break;
-
-            case MotionEvent.ACTION_UP:
-                break;
-
-            case MotionEvent.ACTION_CANCEL:
-                break;
-
-        }
 
     }
 
@@ -201,6 +265,10 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
         return event.getAction()==MotionEvent.ACTION_DOWN;
     }
 
+    private boolean isActionUpOrCancel(MotionEvent event){
+        return event.getAction()==MotionEvent.ACTION_UP || event.getAction()==MotionEvent.ACTION_CANCEL;
+    }
+
     private boolean topDrawableHit(TextView textview, int drawableHeight, float x, float y){
 
         int xmin=textview.getPaddingLeft();
@@ -227,4 +295,23 @@ public class BucketPickerView extends LinearLayout implements View.OnTouchListen
     private boolean hasDrawableBottom(Drawable[] drawables){
         return drawables[BOTTOM]!=null;
     }
+
+
+    private void toggleDrawable(TextView textView, boolean pressed){
+        if(pressed){
+            //which drawable is pressed
+            if(mIncrement){
+                textView.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.up_pressed,0,R.drawable.down_normal);
+            }else{
+                //decrement pressed
+                textView.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.up_normal,0,R.drawable.down_pressed);
+            }
+
+        }else{
+            //reset as nothing is pressed
+            textView.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.up_normal,0,R.drawable.down_normal);
+        }
+    }
+
+
 }
