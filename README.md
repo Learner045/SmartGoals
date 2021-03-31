@@ -17,6 +17,7 @@ Project is created with:
 * Set a deadline for a goal
 * Notification services
 * Track progress through completed goals
+* Swipe to remove goal
 
 ## Android Components
 
