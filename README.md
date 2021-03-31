@@ -7,7 +7,7 @@ Android app to set goals, track deadliines, set up reminder, and track progress.
 Project is created with:
 * Java
 * Material Design
-* Realm database
+* Realm Database
 * Android Studio
 * Apache Maven
 
